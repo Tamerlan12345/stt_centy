@@ -15,7 +15,7 @@ def load_model():
         logger.info("Loading Faster-Whisper model into memory...")
         # 'large-v3-turbo' is optimized for speed/accuracy balance on CPU/Edge
         # compute_type "int8" is crucial for CPU speed and RAM footprint.
-        _fw_model = WhisperModel("large-v3-turbo", device="cpu", compute_type="int8", cpu_threads=CPU_THREADS)
+        _fw_model = WhisperModel("small", device="cpu", compute_type="int8", cpu_threads=CPU_THREADS)
         logger.info("Faster-Whisper model loaded successfully.")
     return True
 
