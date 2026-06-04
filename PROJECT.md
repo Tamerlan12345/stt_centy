@@ -36,6 +36,7 @@
 | 5 | Switch to medium model | Feature | Done | `app/config.py`, `build.sh` | G1, G2 | Switched to medium model for higher accuracy |
 | 6 | Switch to medium-q5_0 model | Feature | Done | `app/config.py`, `build.sh` | G1, G2, G3 | Optimal quality/RAM balance |
 | 7 | Switch to large-v3-q5_0 model | Feature | Done | `app/config.py`, `build.sh` | G1, G2, G3 | Maximize quality due to medium skipping words |
+| 8 | Refactor to Vosk STT | Refactor | Done | `app/transcriber.py`, `build.sh`, `requirements.txt` | G1, G2, G3 | Switched to Vosk to drastically speed up Russian transcription on CPU |
 
 ## Known Issues & Technical Debt
 | Issue | Severity | Location | Impact on G1 / G3 / G4 | Owner | Plan |

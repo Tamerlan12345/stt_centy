@@ -2,26 +2,20 @@
 set -e
 
 echo "=== STT Centy Build Script ==="
-mkdir -p bin models
+mkdir -p models
 
-if [ ! -f bin/whisper-cli ]; then
-    echo "Compiling whisper.cpp for Linux..."
-    wget -q https://github.com/ggerganov/whisper.cpp/archive/refs/tags/v1.5.4.tar.gz
-    tar -xzf v1.5.4.tar.gz
-    cd whisper.cpp-1.5.4
-    make
-    cp main ../bin/whisper-cli
-    cd ..
-    rm -rf whisper.cpp-1.5.4 v1.5.4.tar.gz
-    echo "whisper-cli compiled successfully."
+echo "Installing Python dependencies..."
+pip install -r requirements.txt
+
+echo "Downloading Vosk Russian model..."
+if [ ! -d models/vosk-model-ru ]; then
+    wget -q https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip -O models/vosk.zip
+    unzip -q models/vosk.zip -d models/
+    mv models/vosk-model-small-ru-0.22 models/vosk-model-ru
+    rm models/vosk.zip
+    echo "Vosk model downloaded."
 else
-    echo "whisper-cli already exists."
+    echo "Vosk model already exists."
 fi
 
-if [ ! -f models/ggml-large-v3-q5_0.bin ]; then
-    echo "Downloading ggml-large-v3-q5_0.bin model..."
-    wget -q https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-q5_0.bin -O models/ggml-large-v3-q5_0.bin
-    echo "Model downloaded."
-else
-    echo "Model already exists."
-fi
+echo "Build complete."
