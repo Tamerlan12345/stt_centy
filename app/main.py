@@ -30,7 +30,8 @@ async def startup_event():
 @app.post("/upload")
 async def upload_audio(
     file: UploadFile = File(...),
-    language: str = Form("auto")
+    language: str = Form("auto"),
+    prompt: str = Form("")
 ):
     if not file.filename:
         raise HTTPException(status_code=400, detail="No file provided")
@@ -60,7 +61,7 @@ async def upload_audio(
     status_data = init_task_status(task_id, file.filename)
     
     # Add to background queue
-    await add_task(task_id, file.filename, language)
+    await add_task(task_id, file.filename, language, prompt)
     
     return JSONResponse(content=status_data)
 

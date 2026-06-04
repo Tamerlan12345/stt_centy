@@ -19,7 +19,7 @@ def load_model():
         logger.info("Faster-Whisper model loaded successfully.")
     return True
 
-def transcribe_chunk(wav_path: Path, language: str) -> list[dict]:
+def transcribe_chunk(wav_path: Path, language: str, prompt: str = "") -> list[dict]:
     """Runs Faster-Whisper on a single wav chunk. Returns a list of segments."""
     try:
         load_model()
@@ -31,7 +31,9 @@ def transcribe_chunk(wav_path: Path, language: str) -> list[dict]:
             str(wav_path),
             language=lang_code,
             beam_size=5,
-            word_timestamps=True
+            word_timestamps=True,
+            initial_prompt=prompt if prompt.strip() else None,
+            vad_filter=True  # Important to prevent hallucination on silence
         )
         
         segments = []

@@ -13,17 +13,19 @@ logger = logging.getLogger(__name__)
 # Single queue to enforce 1 concurrent task
 task_queue = asyncio.Queue()
 
-async def add_task(task_id: str, original_filename: str, language: str):
+async def add_task(task_id: str, original_filename: str, language: str, prompt: str = ""):
     await task_queue.put({
         "task_id": task_id,
         "filename": original_filename,
-        "language": language
+        "language": language,
+        "prompt": prompt
     })
     logger.info(f"Task {task_id} added to queue. Queue size: {task_queue.qsize()}")
 
 async def process_task(task_info: dict):
     task_id = task_info["task_id"]
     language = task_info["language"]
+    prompt = task_info.get("prompt", "")
     
     logger.info(f"Starting processing for task {task_id}")
     
@@ -57,7 +59,7 @@ async def process_task(task_info: dict):
         
         for i, chunk_path in enumerate(chunks):
             logger.info(f"Transcribing chunk {i+1}/{len(chunks)}")
-            segments = await asyncio.to_thread(transcribe_chunk, chunk_path, language)
+            segments = await asyncio.to_thread(transcribe_chunk, chunk_path, language, prompt)
             
             # Adjust timestamps by adding chunk offset
             offset = i * CHUNK_SECONDS
