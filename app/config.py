@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
-
 import platform
+import imageio_ffmpeg
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -15,6 +15,9 @@ UPLOAD_DIR = BASE_DIR / "uploads"
 TEMP_DIR = BASE_DIR / "temp"
 RESULT_DIR = BASE_DIR / "results"
 LOGS_DIR = BASE_DIR / "logs"
+
+# Use standalone FFmpeg binary installed via pip
+FFMPEG_BIN = imageio_ffmpeg.get_ffmpeg_exe()
 
 AUDIO_SAMPLE_RATE = 16000
 AUDIO_CHANNELS = 1

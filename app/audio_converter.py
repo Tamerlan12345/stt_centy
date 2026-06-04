@@ -2,14 +2,14 @@ import subprocess
 import logging
 from pathlib import Path
 
-from app.config import AUDIO_SAMPLE_RATE, AUDIO_CHANNELS, CHUNK_SECONDS, TEMP_DIR
+from app.config import AUDIO_SAMPLE_RATE, AUDIO_CHANNELS, CHUNK_SECONDS, TEMP_DIR, FFMPEG_BIN
 
 logger = logging.getLogger(__name__)
 
 def convert_to_wav(input_path: Path, output_path: Path) -> bool:
     """Converts media file to 16kHz Mono WAV suitable for whisper.cpp"""
     cmd = [
-        "ffmpeg",
+        FFMPEG_BIN,
         "-y",               # Overwrite
         "-i", str(input_path),
         "-ar", str(AUDIO_SAMPLE_RATE),
@@ -36,7 +36,7 @@ def chunk_audio(wav_path: Path, task_id: str) -> list[Path]:
     output_pattern = str(TEMP_DIR / f"{task_id}_chunk_%03d.wav")
     
     cmd = [
-        "ffmpeg",
+        FFMPEG_BIN,
         "-y",
         "-i", str(wav_path),
         "-f", "segment",
