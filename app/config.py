@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Support both Windows (.exe) and Linux binary names
 DEFAULT_BIN_NAME = "whisper-cli.exe" if platform.system() == "Windows" else "whisper-cli"
 
-MODEL_PATH = os.getenv("MODEL_PATH", str(BASE_DIR / "models" / "ggml-small.bin"))
+MODEL_PATH = os.getenv("MODEL_PATH", str(BASE_DIR / "models" / "ggml-medium.bin"))
 WHISPER_BIN = os.getenv("WHISPER_BIN", str(BASE_DIR / "bin" / DEFAULT_BIN_NAME))
 
 UPLOAD_DIR = BASE_DIR / "uploads"
