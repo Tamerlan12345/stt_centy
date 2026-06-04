@@ -3,5 +3,5 @@ uvicorn
 python-multipart
 pydantic
 imageio-ffmpeg
-vosk
+faster-whisper
 soundfile

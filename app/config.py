@@ -8,8 +8,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Support both Windows (.exe) and Linux binary names
 DEFAULT_BIN_NAME = "whisper-cli.exe" if platform.system() == "Windows" else "whisper-cli"
 
-MODEL_PATH = os.getenv("MODEL_PATH", str(BASE_DIR / "models" / "vosk-model-ru"))
-
 UPLOAD_DIR = BASE_DIR / "uploads"
 TEMP_DIR = BASE_DIR / "temp"
 RESULT_DIR = BASE_DIR / "results"
