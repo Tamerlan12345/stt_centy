@@ -356,14 +356,14 @@
         
         dropZone.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
 
-        function handleFile(file) {
+        window.handleFile = function(file) {
             if (!file) return;
             selectedFile = file;
             fileNameEl.textContent = file.name;
             startBtn.disabled = false;
-        }
+        };
 
-        async function startProcess() {
+        window.startProcess = async function() {
             if (!selectedFile) return;
 
             document.getElementById('setup-card').style.display = 'none';
