@@ -33,7 +33,10 @@ def transcribe_chunk(wav_path: Path, language: str, prompt: str = "") -> list[di
             beam_size=5,
             word_timestamps=True,
             initial_prompt=prompt if prompt.strip() else None,
-            vad_filter=True  # Important to prevent hallucination on silence
+            vad_filter=False,             # Не вырезать тишину — пусть модель читает всё
+            no_speech_threshold=0.1,      # Дефолт 0.6 — слишком агрессивный: пропускал "Алматы"
+            log_prob_threshold=-2.0,      # Дефолт -1.0 — разрешаем неуверенные токены
+            condition_on_previous_text=True  # Используем контекст предыдущих слов
         )
         
         segments = []
