@@ -34,6 +34,7 @@
 | 3 | Install small model | Feature | Done | `app/config.py`, `build.sh` | G1, G2 | Switched default from base to small |
 | 4 | Setup .gitignore | Fix | Done | `.gitignore` | G4 | Ignore large models and temp dirs |
 | 5 | Switch to medium model | Feature | Done | `app/config.py`, `build.sh` | G1, G2 | Switched to medium model for higher accuracy |
+| 6 | Switch to medium-q5_0 model | Feature | Done | `app/config.py`, `build.sh` | G1, G2, G3 | Optimal quality/RAM balance |
 
 ## Known Issues & Technical Debt
 | Issue | Severity | Location | Impact on G1 / G3 / G4 | Owner | Plan |
