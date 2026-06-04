@@ -18,9 +18,9 @@ else
     echo "whisper-cli already exists."
 fi
 
-if [ ! -f models/ggml-base.bin ]; then
-    echo "Downloading ggml-base.bin model..."
-    wget -q https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin -O models/ggml-base.bin
+if [ ! -f models/ggml-small.bin ]; then
+    echo "Downloading ggml-small.bin model..."
+    wget -q https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.bin -O models/ggml-small.bin
     echo "Model downloaded."
 else
     echo "Model already exists."

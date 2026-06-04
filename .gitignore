@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Downloaded models and compiled binaries
+models/
+bin/
+
+# Uploaded and processing files
+uploads/
+temp/
+results/
+logs/
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+*.swp

@@ -30,6 +30,9 @@
 | # | Task | Mode | Status | Files | Goals satisfied (G1–G4) | Notes |
 |---|------|------|--------|-------|-------------------------|-------|
 | 1 | Setup Base Project & API | Feature | In Progress | `PROJECT.md`, `app/*` | G1, G2, G3, G4 | - |
+| 2 | Whisper models research | Research | Done | - | G1 | Answered user about base/small/medium/large models |
+| 3 | Install small model | Feature | Done | `app/config.py`, `build.sh` | G1, G2 | Switched default from base to small |
+| 4 | Setup .gitignore | Fix | Done | `.gitignore` | G4 | Ignore large models and temp dirs |
 
 ## Known Issues & Technical Debt
 | Issue | Severity | Location | Impact on G1 / G3 / G4 | Owner | Plan |
