@@ -6,7 +6,7 @@ import httpx
 logger = logging.getLogger(__name__)
 
 MAX_RETRIES = 3
-TIMEOUT_SECONDS = 15
+TIMEOUT_SECONDS = 40
 RETRY_BACKOFF_SECONDS = [2, 4]  # delay before attempts 2 and 3
 
 
