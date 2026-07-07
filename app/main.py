@@ -31,11 +31,15 @@ async def startup_event():
 async def upload_audio(
     file: UploadFile = File(...),
     language: str = Form("auto"),
-    prompt: str = Form("")
+    prompt: str = Form(""),
+    callback_url: str = Form(None)
 ):
     if not file.filename:
         raise HTTPException(status_code=400, detail="No file provided")
-        
+
+    if callback_url and not callback_url.startswith(("http://", "https://")):
+        raise HTTPException(status_code=400, detail="callback_url must start with http:// or https://")
+
     task_id = generate_task_id()
     
     # Check extension to ensure it is media
@@ -61,7 +65,7 @@ async def upload_audio(
     status_data = init_task_status(task_id, file.filename)
     
     # Add to background queue
-    await add_task(task_id, file.filename, language, prompt)
+    await add_task(task_id, file.filename, language, prompt, callback_url)
     
     return JSONResponse(content=status_data)
 

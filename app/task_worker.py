@@ -2,10 +2,11 @@ import asyncio
 import logging
 from pathlib import Path
 
-from app.file_manager import update_task_status, get_status_file, delete_task_files
+from app.file_manager import update_task_status, get_task_status, get_status_file, delete_task_files
 from app.audio_converter import convert_to_wav, chunk_audio
 from app.transcriber import transcribe_chunk
 from app.subtitle_builder import save_results
+from app.webhook_notifier import send_callback
 from app.config import UPLOAD_DIR, TEMP_DIR, CHUNK_SECONDS
 
 logger = logging.getLogger(__name__)
@@ -13,12 +14,13 @@ logger = logging.getLogger(__name__)
 # Single queue to enforce 1 concurrent task
 task_queue = asyncio.Queue()
 
-async def add_task(task_id: str, original_filename: str, language: str, prompt: str = ""):
+async def add_task(task_id: str, original_filename: str, language: str, prompt: str = "", callback_url: str = None):
     await task_queue.put({
         "task_id": task_id,
         "filename": original_filename,
         "language": language,
-        "prompt": prompt
+        "prompt": prompt,
+        "callback_url": callback_url
     })
     logger.info(f"Task {task_id} added to queue. Queue size: {task_queue.qsize()}")
 
@@ -26,6 +28,7 @@ async def process_task(task_info: dict):
     task_id = task_info["task_id"]
     language = task_info["language"]
     prompt = task_info.get("prompt", "")
+    callback_url = task_info.get("callback_url")
     
     logger.info(f"Starting processing for task {task_id}")
     
@@ -79,14 +82,22 @@ async def process_task(task_info: dict):
             "message": "Успешно",
             **final_result
         })
-        
+
+        if callback_url:
+            delivered = await send_callback(callback_url, get_task_status(task_id))
+            update_task_status(task_id, {"callback_delivered": delivered})
+
         # Cleanup
         logger.info(f"Task {task_id} completed successfully. Cleaning up temp files.")
-        
+
     except Exception as e:
         logger.error(f"Task {task_id} failed: {e}")
         update_task_status(task_id, {"status": "failed", "message": str(e)})
-        
+
+        if callback_url:
+            delivered = await send_callback(callback_url, get_task_status(task_id))
+            update_task_status(task_id, {"callback_delivered": delivered})
+
     finally:
         # Always delete the input and temp files, but keep results
         try:

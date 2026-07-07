@@ -13,10 +13,11 @@
 |--------|------|----------------|------------|----------------|
 | main | `app/main.py` | FastAPI entrypoint, API routes | `task_worker`, `file_manager` | - |
 | config | `app/config.py` | Configuration constants | - | all |
-| task_worker | `app/task_worker.py` | Background queue processor | `audio_converter`, `transcriber`, `subtitle_builder` | `main` |
+| task_worker | `app/task_worker.py` | Background queue processor | `audio_converter`, `transcriber`, `subtitle_builder`, `webhook_notifier` | `main` |
 | audio_converter | `app/audio_converter.py` | FFmpeg wrapper (convert/chunk) | `config` | `task_worker` |
 | transcriber | `app/transcriber.py` | whisper.cpp wrapper | `config` | `task_worker` |
 | subtitle_builder | `app/subtitle_builder.py` | SRT/VTT/JSON generation | `config` | `task_worker` |
+| webhook_notifier | `app/webhook_notifier.py` | POSTs completed/failed result to caller's `callback_url` with retry | - | `task_worker` |
 | file_manager | `app/file_manager.py` | Disk operations, path traversal safety | `config` | all |
 
 ## Decisions Log
@@ -25,6 +26,7 @@
 | 1 | 2026-06-04 | File-based status storage | Need persistent task tracking without a database. | SQLite (too heavy for MVP), In-memory dict (lost on restart). | Low |
 | 2 | 2026-06-04 | `asyncio.Queue` worker | Need to limit concurrent STT processing to 1 due to 3GB RAM limit. | Celery/Redis (too heavy). ThreadPoolExecutor (less control). | Low |
 | 3 | 2026-06-04 | Windows Executable Name | The OS is Windows. `whisper-cli` defaults to `whisper-cli.exe` in config. | `.sh` or linux binaries. | Low |
+| 4 | 2026-07-07 | Direct webhook callback instead of n8n | Caller needs the transcription pushed back automatically instead of polling. Service already exposes a full async job API (`/upload`, `/status`, `/result`) with open CORS, built for direct integration. | n8n as orchestrator (adds a hop + its own polling loop to replicate what `/status` already does; only pays off if fanning out to many unrelated trigger sources). | Low |
 
 ## Task Log
 | # | Task | Mode | Status | Files | Goals satisfied (G1–G4) | Notes |
@@ -37,6 +39,7 @@
 | 6 | Switch to medium-q5_0 model | Feature | Done | `app/config.py`, `build.sh` | G1, G2, G3 | Optimal quality/RAM balance |
 | 7 | Switch to large-v3-q5_0 model | Feature | Done | `app/config.py`, `build.sh` | G1, G2, G3 | Maximize quality due to medium skipping words |
 | 8 | Refactor to Faster-Whisper STT | Refactor | Done | `app/transcriber.py`, `build.sh`, `requirements.txt` | G1, G2, G3 | Switched to Faster-Whisper large-v3-turbo after Vosk failed to recognize audio correctly. Faster-Whisper brings back Kazakh support and high Russian accuracy, while being 4x faster on CPU |
+| 9 | Add webhook callback (no n8n) | Feature | Done | `app/webhook_notifier.py`, `app/main.py`, `app/task_worker.py`, `requirements.txt`, `README.md` | G1, G2 | Added optional `callback_url` to `/upload`; worker POSTs the result JSON directly to it on completion/failure (3 retries, 15s timeout). Avoids adding n8n as a middle-man since the service already exposes the async job API n8n would otherwise re-implement (Wait-node polling loop) |
 
 ## Known Issues & Technical Debt
 | Issue | Severity | Location | Impact on G1 / G3 / G4 | Owner | Plan |
